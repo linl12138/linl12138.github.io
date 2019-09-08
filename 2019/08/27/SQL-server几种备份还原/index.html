@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="为什么要备份从删库到跑路是数据库届流传已久的戏谑之言，但还是不断有人在这条路上负伤或者阵亡。为了防止数据真的丢失，备份是保护数据唯一的途径。 一般有3种备份还原的模式会遇到，下面挨个说明一下。  简单备份还原简单模式下的完整数据库还原只涉及到一到两个restore语句，具体取决于是否要进行数据库差异备份。如果只使用完成备份，则只需还原最近的备份,如下图:  如果还需进行差异备份还原，则应还原最近的">
+<meta name="keywords" content="备份&#x2F;还原">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL server几种备份还原">
+<meta property="og:url" content="http://yoursite.com/2019/08/27/SQL-server几种备份还原/index.html">
+<meta property="og:site_name" content="小院随笔">
+<meta property="og:description" content="为什么要备份从删库到跑路是数据库届流传已久的戏谑之言，但还是不断有人在这条路上负伤或者阵亡。为了防止数据真的丢失，备份是保护数据唯一的途径。 一般有3种备份还原的模式会遇到，下面挨个说明一下。  简单备份还原简单模式下的完整数据库还原只涉及到一到两个restore语句，具体取决于是否要进行数据库差异备份。如果只使用完成备份，则只需还原最近的备份,如下图:  如果还需进行差异备份还原，则应还原最近的">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/08/27/static/only_full_backup.png">
+<meta property="og:image" content="http://yoursite.com/2019/08/27/static/differential_backup.png">
+<meta property="og:updated_time" content="2019-09-08T04:41:16.027Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SQL server几种备份还原">
+<meta name="twitter:description" content="为什么要备份从删库到跑路是数据库届流传已久的戏谑之言，但还是不断有人在这条路上负伤或者阵亡。为了防止数据真的丢失，备份是保护数据唯一的途径。 一般有3种备份还原的模式会遇到，下面挨个说明一下。  简单备份还原简单模式下的完整数据库还原只涉及到一到两个restore语句，具体取决于是否要进行数据库差异备份。如果只使用完成备份，则只需还原最近的备份,如下图:  如果还需进行差异备份还原，则应还原最近的">
+<meta name="twitter:image" content="http://yoursite.com/2019/08/27/static/only_full_backup.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/08/27/SQL-server几种备份还原/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>SQL server几种备份还原 | 小院随笔</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小院随笔</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/about" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/08/27/SQL-server几种备份还原/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="林磊">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小院随笔">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SQL server几种备份还原
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-08-27 17:04:40" itemprop="dateCreated datePublished" datetime="2019-08-27T17:04:40+08:00">2019-08-27</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-08 12:41:16" itemprop="dateModified" datetime="2019-09-08T12:41:16+08:00">2019-09-08</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/SQL-server/" itemprop="url" rel="index"><span itemprop="name">SQL server</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="为什么要备份"><a href="#为什么要备份" class="headerlink" title="为什么要备份"></a>为什么要备份</h3><p>从删库到跑路是数据库届流传已久的戏谑之言，但还是不断有人在这条路上负伤或者阵亡。为了防止数据真的丢失，备份是保护数据唯一的途径。</p>
+<p>一般有3种备份还原的模式会遇到，下面挨个说明一下。</p>
+<hr>
+<h3 id="简单备份还原"><a href="#简单备份还原" class="headerlink" title="简单备份还原"></a>简单备份还原</h3><p>简单模式下的完整数据库还原只涉及到一到两个restore语句，具体取决于是否要进行数据库差异备份。如果只使用完成备份，则只需还原最近的备份,如下图:</p>
+<p><img src="../static/only_full_backup.png" alt="简单备份"></p>
+<p>如果还需进行差异备份还原，则应还原最近的完整数据库备份而不还原数据库，然后还原最近的差异备份并还原数据库，如下图:</p>
+<p><img src="../static/differential_backup.png" alt="差异备份还原"></p>
+<p>进行备份之前要先确认数据库当前的备份模式(simple or full)：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SELECT name, recovery_model_desc  FROM sys.databases   WHERE name = &apos;AdventureWorks2012&apos;</span><br></pre></td></tr></table></figure>
+
+<p>默认为简单备份模式，后面进行复杂恢复时需要进行修改。</p>
+<p>这里以AdventureWorks2012数据库为例进行测试，</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">USE master;  </span><br><span class="line">--Make sure the database is using the simple recovery model.  </span><br><span class="line">ALTER DATABASE AdventureWorks2012 SET RECOVERY SIMPLE;  </span><br><span class="line">GO  </span><br><span class="line">-- Back up the full AdventureWorks2012 database.  </span><br><span class="line">BACKUP DATABASE AdventureWorks2012   </span><br><span class="line">TO DISK = &apos;C:\temp\AdventureWorks2012.bak&apos;   </span><br><span class="line">  WITH FORMAT;  </span><br><span class="line">GO  </span><br><span class="line">--Create a differential database backup.  </span><br><span class="line">BACKUP DATABASE AdventureWorks2012   </span><br><span class="line">TO DISK = &apos;C:\temp\AdventureWorks2012.bak&apos;  </span><br><span class="line">   WITH DIFFERENTIAL;  </span><br><span class="line">GO  </span><br><span class="line">--Restore the full database backup (from backup set 1).  </span><br><span class="line">RESTORE DATABASE AdventureWorks2012   </span><br><span class="line">FROM DISK = &apos;C:\temp\AdventureWorks2012.bak&apos;   </span><br><span class="line">   WITH FILE=1, NORECOVERY;  </span><br><span class="line">--Restore the differential backup (from backup set 2).  </span><br><span class="line">RESTORE DATABASE AdventureWorks2012</span><br><span class="line">FROM DISK = &apos;C:\temp\AdventureWorks2012.bak&apos;   </span><br><span class="line">   WITH FILE=2, RECOVERY;  </span><br><span class="line">GO</span><br></pre></td></tr></table></figure>
+
+<p>这里我们先将数据库的备份模式修改为简单模式，然后进行数据库完整备份，数据库差异备份。备份成功后，先进行还原数据库完整备份文件而不还原数据库，最后还原差异备份并还原数据库。是否还原数据库还是只还原备份取决于参数recovery和norecovery，二者区别在于使用norecovery还原之后数据库并没有进行还原数据库，数据库此时仍然是不可用的，可以继续进行其他的还原操作，但如果恢复完整备份时使用recovery参数，此时数据库已经可以使用，此时如果有其他操作，则差异备份的就无法恢复了，这一点在还原多个备份时尤其要注意。</p>
+<h3 id="将数据库恢复到故障点"><a href="#将数据库恢复到故障点" class="headerlink" title="将数据库恢复到故障点"></a>将数据库恢复到故障点</h3><p>通过使用完整模式备份，我们可以将数据库恢复到某个特定的备份点，在完整备份模式下，需要进行日志以及尾部日志的备份，首先将备份模式修改为完整模式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER DATABASE AdventureWorks2012 SET RECOVERY FULL</span><br></pre></td></tr></table></figure>
+
+<p>然后分别进行数据库完整备份，日志备份以及日志尾部备份：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">BACKUP DATABASE AdventureWorks2012 TO DISK = &apos;C:\temp\AdventureWorks2012_Data.bck&apos;; --完整备份</span><br><span class="line">BACKUP LOG AdventureWorks2012 TO DISK = &apos;C:\temp\AdventureWorks2012_Log.bck&apos;;--日志例程备份</span><br><span class="line"></span><br><span class="line">-- Step 1: Create a tail-log backup by using WITH NORECOVERY.  </span><br><span class="line">BACKUP LOG AdventureWorks2012  </span><br><span class="line">   TO DISK = &apos;C:\temp\AdventureWorks2012_Logtail.bck&apos;  </span><br><span class="line">   WITH NORECOVERY;  </span><br><span class="line">GO</span><br></pre></td></tr></table></figure>
+
+<p>其中日志尾部备份是指备份从上次日志备份起所产生的事务日志。</p>
+<p>然后进行还原操作：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">-- Step 2: Restore the full database backup.  </span><br><span class="line">RESTORE DATABASE AdventureWorks2012  </span><br><span class="line">   FROM DISK = &apos;C:\temp\AdventureWorks2012_Data.bck&apos;  </span><br><span class="line">   WITH NORECOVERY;  </span><br><span class="line">GO  </span><br><span class="line">-- Step 3: Restore the first transaction log backup.  </span><br><span class="line">RESTORE LOG AdventureWorks2012  </span><br><span class="line">   FROM DISK = &apos;C:\temp\AdventureWorks2012_Log.bck&apos;  </span><br><span class="line">   WITH NORECOVERY;  </span><br><span class="line">GO  </span><br><span class="line">-- Step 4: Restore the tail-log backup.  </span><br><span class="line">RESTORE LOG AdventureWorks2012  </span><br><span class="line">   FROM  DISK = &apos;C:\temp\AdventureWorks2012_Logtail.bck&apos;  </span><br><span class="line">   WITH NORECOVERY;  </span><br><span class="line">GO </span><br><span class="line">-- Step 5: Recover the database.  </span><br><span class="line">RESTORE DATABASE AdventureWorks2012  </span><br><span class="line">   WITH RECOVERY;</span><br></pre></td></tr></table></figure>
+
+<p>步骤为还原数据库完整备份，还原之前有过备份的事务日志备份，还原尾部日志备份，最后恢复数据库就可以将数据库还原到发生故障的点了。</p>
+<h3 id="将数据库还原到特定时间点"><a href="#将数据库还原到特定时间点" class="headerlink" title="将数据库还原到特定时间点"></a>将数据库还原到特定时间点</h3><p>上面的两种备份只能将数据库恢复到备份的节点，而无法更灵活的恢复到之前有过备份的任意时间点，当完整模式下存在早于目标还原点的完整备份，就可以通过对之后每个日志备份的还原把数据库还原到目标时间点。这种还原一般涉及到多个日志备份的还原操作。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">RESTORE DATABASE AdventureWorks2012 </span><br><span class="line">   FROM disk=&apos;C:\temp\AdventureWorks2012_Data.bck&apos; with NORECOVERY;  </span><br><span class="line">RESTORE LOG AdventureWorks2012 </span><br><span class="line">   FROM disk=&apos;C:\temp\AdventureWorks2012_Log.bck&apos; with NORECOVERY, STOPAT = &apos;08/27/2019 16:20&apos;;  </span><br><span class="line">   RESTORE LOG AdventureWorks2012 </span><br><span class="line">   FROM disk=&apos;C:\temp\AdventureWorks2012_Log2.bck&apos; with NORECOVERY, STOPAT = &apos;08/27/2019 16:20&apos;;  </span><br><span class="line">RESTORE DATABASE AdventureWorks2012 WITH RECOVERY;</span><br></pre></td></tr></table></figure>
+
+<p>第一步仍旧是进行数据库完整备份的还原但不还原数据库，目标的还原时间为’08/27/2019 16:20’,存在两个日志备份集，分别将他们还原，并指定’STOPAT’参数为相同时间，最后恢复数据库即可。 </p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/备份-还原/" rel="tag"># 备份/还原</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/11/使用docker快速搭建owncloud云盘/" rel="next" title="使用docker快速搭建owncloud云盘">
+                <i class="fa fa-chevron-left"></i> 使用docker快速搭建owncloud云盘
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/08/hello-world/" rel="prev" title="Hello World">
+                Hello World <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">林磊</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories">
+          
+        
+        
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/linl12138" title="GitHub &rarr; https://github.com/linl12138" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>GitHub</a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#为什么要备份"><span class="nav-number">1.</span> <span class="nav-text">为什么要备份</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简单备份还原"><span class="nav-number">2.</span> <span class="nav-text">简单备份还原</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将数据库恢复到故障点"><span class="nav-number">3.</span> <span class="nav-text">将数据库恢复到故障点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#将数据库还原到特定时间点"><span class="nav-number">4.</span> <span class="nav-text">将数据库还原到特定时间点</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林磊</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+</body>
+</html>

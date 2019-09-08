@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=7.2.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=7.2.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=7.2.0" color="#222">
+
+
+
+
+
+
+<link rel="stylesheet" href="/css/main.css?v=7.2.0">
+
+
+
+
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css?v=4.7.0">
+
+
+
+
+
+
+
+
+<script id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '7.2.0',
+    sidebar: {"position":"left","display":"post","offset":12,"onmobile":false},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    fancybox: false,
+    mediumzoom: false,
+    fastclick: false,
+    lazyload: false,
+    pangu: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    translation: {
+      copy_button: '复制',
+      copy_success: '复制成功',
+      copy_failure: '复制失败'
+    }
+  };
+</script>
+
+  <meta name="description" content="背景，要求要求定期将SQL server数据库中的部分生产数据查询出来并通过邮件的形式发送给相应人员，涉及SQL server数据库邮件的配置，存储过程的调用。  功能配置SQL server的数据库邮件功能默认是没有开启的，这里需要在对象资源管理器的管理菜单下找到数据库邮件，右键进入配置，主要是要创建配置文件以及和邮件相关的账户，账户创建：这里需要注意的是邮箱的密码不能使用账户的登录密码，需要到">
+<meta name="keywords" content="SQL server,邮件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SQL server运维之发送邮件">
+<meta property="og:url" content="http://yoursite.com/2019/07/22/SQL-server运维之发送邮件/index.html">
+<meta property="og:site_name" content="小院随笔">
+<meta property="og:description" content="背景，要求要求定期将SQL server数据库中的部分生产数据查询出来并通过邮件的形式发送给相应人员，涉及SQL server数据库邮件的配置，存储过程的调用。  功能配置SQL server的数据库邮件功能默认是没有开启的，这里需要在对象资源管理器的管理菜单下找到数据库邮件，右键进入配置，主要是要创建配置文件以及和邮件相关的账户，账户创建：这里需要注意的是邮箱的密码不能使用账户的登录密码，需要到">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:image" content="http://yoursite.com/2019/07/22/static/create_account.png">
+<meta property="og:image" content="http://yoursite.com/2019/07/22/static/mail.png">
+<meta property="og:updated_time" content="2019-09-08T04:41:16.036Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="SQL server运维之发送邮件">
+<meta name="twitter:description" content="背景，要求要求定期将SQL server数据库中的部分生产数据查询出来并通过邮件的形式发送给相应人员，涉及SQL server数据库邮件的配置，存储过程的调用。  功能配置SQL server的数据库邮件功能默认是没有开启的，这里需要在对象资源管理器的管理菜单下找到数据库邮件，右键进入配置，主要是要创建配置文件以及和邮件相关的账户，账户创建：这里需要注意的是邮箱的密码不能使用账户的登录密码，需要到">
+<meta name="twitter:image" content="http://yoursite.com/2019/07/22/static/create_account.png">
+
+
+
+
+
+  
+  
+  <link rel="canonical" href="http://yoursite.com/2019/07/22/SQL-server运维之发送邮件/">
+
+
+
+<script id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  
+  <title>SQL server运维之发送邮件 | 小院随笔</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .motion-element,
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-title { opacity: initial; }
+
+  .use-motion .logo,
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">小院随笔</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+    
+    
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+        
+          
+          <li class="menu-item menu-item-home">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>首页</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-about">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/about" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>关于</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-tags">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/tags" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>标签</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-categories">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/categories" rel="section"><i class="menu-item-icon fa fa-fw fa-question-circle"></i> <br>分类</a>
+
+  </li>
+        
+        
+        
+          
+          <li class="menu-item menu-item-archives">
+
+    
+    
+      
+    
+
+    
+
+    <a href="/archives/" rel="section"><i class="menu-item-icon fa fa-fw fa-archive"></i> <br>归档</a>
+
+  </li>
+
+      
+      
+    </ul>
+  
+
+  
+
+  
+</nav>
+
+
+
+</div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+            
+
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/22/SQL-server运维之发送邮件/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="林磊">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小院随笔">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">SQL server运维之发送邮件
+
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-07-22 17:29:14" itemprop="dateCreated datePublished" datetime="2019-07-22T17:29:14+08:00">2019-07-22</time>
+            </span>
+          
+
+          
+            
+
+            
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">更新于</span>
+                
+                <time title="修改时间：2019-09-08 12:41:16" itemprop="dateModified" datetime="2019-09-08T12:41:16+08:00">2019-09-08</time>
+              </span>
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/SQL-server/" itemprop="url" rel="index"><span itemprop="name">SQL server</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="背景，要求"><a href="#背景，要求" class="headerlink" title="背景，要求"></a>背景，要求</h2><p>要求定期将SQL server数据库中的部分生产数据查询出来并通过邮件的形式发送给相应人员，涉及SQL server数据库邮件的配置，存储过程的调用。</p>
+<hr>
+<h2 id="功能配置"><a href="#功能配置" class="headerlink" title="功能配置"></a>功能配置</h2><p>SQL server的数据库邮件功能默认是没有开启的，这里需要在对象资源管理器的管理菜单下找到数据库邮件，右键进入配置，主要是要创建配置文件以及和邮件相关的账户，账户创建：<img src="../static/create_account.png" alt="创建账户"><br>这里需要注意的是邮箱的密码不能使用账户的登录密码，需要到对应的邮箱官网去设置授权码以实现本地客户端的登录。<br>执行完配置可以对结果进行测试，右键选择发送测试电子右键即可，可以通过查看邮件日志来观察发送情况：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> msdb.dbo.sysmail_event_log</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="查询数据以特定格式发送"><a href="#查询数据以特定格式发送" class="headerlink" title="查询数据以特定格式发送"></a>查询数据以特定格式发送</h2><p>这里我们想要实现的是查询相应的数据并以一种方便查看的格式发送，发送邮件是调用”msdb.dbo.sp_send_dbmail”存储过程，可以发现里面有个body_format的参数可以用来设置邮件文本格式，一般选择html格式。执行存储过程代码如下：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">EXEC msdb.dbo.sp_send_dbmail </span><br><span class="line">    @profile_name = 'dbmailconfig',         <span class="comment">--之前创建配置文件名称</span></span><br><span class="line">    @recipients =  '',                      <span class="comment">--收件email地址</span></span><br><span class="line">    @subject = 'test',                      <span class="comment">--邮件主题</span></span><br><span class="line">	@body = @mailbody,                      <span class="comment">--发送邮件正文</span></span><br><span class="line">	@body_format = 'html'                   <span class="comment">--邮件正文格式</span></span><br></pre></td></tr></table></figure>
+
+<p>“msdb.dbo.sp_send_dbmail”的参数非常多，但一般情况下使用这几个就足够了，接下来的难点就在于邮件正文的设计，难点主要在于如何将查询的内容插入到对应的节点，举一个小栗子：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> @mailbody = N<span class="string">'&lt;H1&gt;mail_function&lt;/H1&gt;&lt;br&gt;目前测试中&lt;br&gt;&lt;table border="1"&gt;'</span> +</span><br><span class="line">                N<span class="string">'&lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;UserID&lt;/th&gt;&lt;th&gt;Username&lt;/th&gt;&lt;th&gt;passwd&lt;/th&gt;&lt;/tr&gt;'</span>  </span><br><span class="line">                + <span class="keyword">CAST</span> ((<span class="keyword">select</span>  <span class="keyword">ID</span> <span class="keyword">as</span> <span class="string">'td'</span>,<span class="string">''</span>,UserID <span class="keyword">as</span> <span class="string">'td'</span>,<span class="string">''</span>,UserName <span class="keyword">as</span> <span class="string">'td'</span>,<span class="string">''</span>,UserPassword <span class="keyword">as</span> <span class="string">'td'</span>,<span class="string">''</span></span><br><span class="line">                <span class="keyword">from</span> TraceabilitySensor.dbo.Users </span><br><span class="line">                <span class="keyword">FOR</span> <span class="keyword">XML</span> <span class="keyword">PATH</span>(<span class="string">'tr'</span>), ELEMENTS) <span class="keyword">AS</span> <span class="keyword">nvarchar</span>(<span class="keyword">max</span>)) ;</span><br></pre></td></tr></table></figure>
+
+<p>这里我是将Users表的ID,UserID,UserNmae,UserPassword字段查询出并用表格的形式呈现，使用”FOR XML PATH”来查找对应节点，实际的结果长这样：<br><img src="../static/mail.png" alt="邮件结果"></p>
+
+      
+    </div>
+
+    
+
+    
+      
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+        
+          
+        
+        <div class="post-tags">
+          
+            <a href="/tags/SQL-server/" rel="tag"># SQL server</a>
+          
+            <a href="/tags/邮件/" rel="tag"># 邮件</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/22/腾讯云centos实现远程桌面/" rel="next" title="腾讯云centos实现远程桌面">
+                <i class="fa fa-chevron-left"></i> 腾讯云centos实现远程桌面
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/08/11/使用docker快速搭建owncloud云盘/" rel="prev" title="使用docker快速搭建owncloud云盘">
+                使用docker快速搭建owncloud云盘 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  
+  <p class="site-author-name" itemprop="name">林磊</p>
+  <div class="site-description motion-element" itemprop="description"></div>
+</div>
+
+
+  <nav class="site-state motion-element">
+    
+      <div class="site-state-item site-state-posts">
+        
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-categories">
+        
+          
+            <a href="/categories">
+          
+        
+        
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+        </a>
+      </div>
+    
+
+    
+      
+      
+      <div class="site-state-item site-state-tags">
+        
+          
+            <a href="/tags">
+          
+        
+        
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+          
+        
+        <span class="site-state-item-count">15</span>
+        <span class="site-state-item-name">标签</span>
+        </a>
+      </div>
+    
+  </nav>
+
+
+
+
+
+
+
+  <div class="links-of-author motion-element">
+    
+      <span class="links-of-author-item">
+      
+      
+        
+      
+      
+        
+      
+        <a href="https://github.com/linl12138" title="GitHub &rarr; https://github.com/linl12138" rel="noopener" target="_blank"><i class="fa fa-fw fa-globe"></i>GitHub</a>
+      </span>
+    
+  </div>
+
+
+
+
+
+
+
+          
+          
+        </div>
+      </div>
+
+      
+      <!--noindex-->
+        <div class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+            
+            
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#背景，要求"><span class="nav-number">1.</span> <span class="nav-text">背景，要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#功能配置"><span class="nav-number">2.</span> <span class="nav-text">功能配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#查询数据以特定格式发送"><span class="nav-number">3.</span> <span class="nav-text">查询数据以特定格式发送</span></a></li></ol></div>
+            
+
+          </div>
+        </div>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love" id="animate">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">林磊</span>
+
+  
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v3.9.0</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 – <a href="https://theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> v7.2.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+    
+
+    
+
+  </div>
+
+  
+
+<script>
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+
+
+
+  
+  <script src="/lib/jquery/index.js?v=3.4.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+
+
+
+  <script src="/js/utils.js?v=7.2.0"></script>
+
+  <script src="/js/motion.js?v=7.2.0"></script>
+
+
+
+  
+  
+
+
+  <script src="/js/affix.js?v=7.2.0"></script>
+
+  <script src="/js/schemes/pisces.js?v=7.2.0"></script>
+
+
+
+  
+  <script src="/js/scrollspy.js?v=7.2.0"></script>
+<script src="/js/post-details.js?v=7.2.0"></script>
+
+
+
+  <script src="/js/next-boot.js?v=7.2.0"></script>
+
+  
+
+  
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// GET RESPONSIVE HEIGHT PASSED FROM IFRAME
+
+window.addEventListener("message", function(e) {
+  var data = e.data;
+  if ((typeof data === 'string') && (data.indexOf('ciu_embed') > -1)) {
+    var featureID = data.split(':')[1];
+    var height = data.split(':')[2];
+    $(`iframe[data-feature=${featureID}]`).height(parseInt(height) + 30);
+  }
+}, false);
+</script>
+
+
+
+
+
+
+
+
+  
+
+</body>
+</html>
