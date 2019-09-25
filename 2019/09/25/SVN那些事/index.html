@@ -95,18 +95,24 @@
   };
 </script>
 
-  <meta name="description" content="腾讯云提供的云服务器选择安装centos或者ubuntu系统默认是最小化安装,没有提供桌面安装，作为一名非Linux服务器运维人员，没有桌面的系统用起来还是很多不方便，而且因为个人主力机是Windows，需要能够实现远程桌面连接，在权衡实用与性能等因素，最终选择的环境如下：  123系统：centos 7.2;桌面选择：KDE;远程桌面：VNC,xrdp；   Linux桌面的发行版有非常多种，但">
-<meta name="keywords" content="腾讯云,centos,远程桌面,VNC,KDE">
+  <meta name="description" content="版本控制发展 什么是版本控制：从字面上来理解版本控制就是用来管理版本的，版本库会帮助我们记录我们每一次修改提交的版本，这样我们可以恢复到以前的任一版本。而且当多人开发的时候他会帮我们把代码合并起来，而且可以记录每一个人的提交记录，这样出现问题之后可以很容易定位。   版本控制作用：   数据备份 版本管理，避免版本混乱 提高多人开发效率   版本控制工具发展史：   本地版本控制   用简单的数据">
+<meta name="keywords" content="SVN,版本管理">
 <meta property="og:type" content="article">
-<meta property="og:title" content="腾讯云centos实现远程桌面">
-<meta property="og:url" content="http://yoursite.com/2019/07/22/腾讯云centos实现远程桌面/index.html">
+<meta property="og:title" content="SVN那些事">
+<meta property="og:url" content="http://yoursite.com/2019/09/25/SVN那些事/index.html">
 <meta property="og:site_name" content="小院随笔">
-<meta property="og:description" content="腾讯云提供的云服务器选择安装centos或者ubuntu系统默认是最小化安装,没有提供桌面安装，作为一名非Linux服务器运维人员，没有桌面的系统用起来还是很多不方便，而且因为个人主力机是Windows，需要能够实现远程桌面连接，在权衡实用与性能等因素，最终选择的环境如下：  123系统：centos 7.2;桌面选择：KDE;远程桌面：VNC,xrdp；   Linux桌面的发行版有非常多种，但">
+<meta property="og:description" content="版本控制发展 什么是版本控制：从字面上来理解版本控制就是用来管理版本的，版本库会帮助我们记录我们每一次修改提交的版本，这样我们可以恢复到以前的任一版本。而且当多人开发的时候他会帮我们把代码合并起来，而且可以记录每一个人的提交记录，这样出现问题之后可以很容易定位。   版本控制作用：   数据备份 版本管理，避免版本混乱 提高多人开发效率   版本控制工具发展史：   本地版本控制   用简单的数据">
 <meta property="og:locale" content="zh-CN">
-<meta property="og:updated_time" content="2019-09-08T04:41:16.074Z">
+<meta property="og:image" content="http://yoursite.com/2019/09/25/static/svn-server.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/25/static/new-repo.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/25/static/import.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/25/static/checkout.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/25/static/checkoutsource.png">
+<meta property="og:updated_time" content="2019-09-25T12:23:12.558Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="腾讯云centos实现远程桌面">
-<meta name="twitter:description" content="腾讯云提供的云服务器选择安装centos或者ubuntu系统默认是最小化安装,没有提供桌面安装，作为一名非Linux服务器运维人员，没有桌面的系统用起来还是很多不方便，而且因为个人主力机是Windows，需要能够实现远程桌面连接，在权衡实用与性能等因素，最终选择的环境如下：  123系统：centos 7.2;桌面选择：KDE;远程桌面：VNC,xrdp；   Linux桌面的发行版有非常多种，但">
+<meta name="twitter:title" content="SVN那些事">
+<meta name="twitter:description" content="版本控制发展 什么是版本控制：从字面上来理解版本控制就是用来管理版本的，版本库会帮助我们记录我们每一次修改提交的版本，这样我们可以恢复到以前的任一版本。而且当多人开发的时候他会帮我们把代码合并起来，而且可以记录每一个人的提交记录，这样出现问题之后可以很容易定位。   版本控制作用：   数据备份 版本管理，避免版本混乱 提高多人开发效率   版本控制工具发展史：   本地版本控制   用简单的数据">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/25/static/svn-server.png">
 
 
 
@@ -114,7 +120,7 @@
 
   
   
-  <link rel="canonical" href="http://yoursite.com/2019/07/22/腾讯云centos实现远程桌面/">
+  <link rel="canonical" href="http://yoursite.com/2019/09/25/SVN那些事/">
 
 
 
@@ -125,7 +131,7 @@
 </script>
 
   
-  <title>腾讯云centos实现远程桌面 | 小院随笔</title>
+  <title>SVN那些事 | 小院随笔</title>
   
 
 
@@ -332,7 +338,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/07/22/腾讯云centos实现远程桌面/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/25/SVN那些事/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="林磊">
@@ -349,7 +355,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">腾讯云centos实现远程桌面
+          <h1 class="post-title" itemprop="name headline">SVN那些事
 
               
             
@@ -375,23 +381,13 @@
                 
               
 
-              <time title="创建时间：2019-07-22 08:55:27" itemprop="dateCreated datePublished" datetime="2019-07-22T08:55:27+08:00">2019-07-22</time>
+              <time title="创建时间：2019-09-25 18:32:11 / 修改时间：20:23:12" itemprop="dateCreated datePublished" datetime="2019-09-25T18:32:11+08:00">2019-09-25</time>
             </span>
           
 
           
             
 
-            
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">更新于</span>
-                
-                <time title="修改时间：2019-09-08 12:41:16" itemprop="dateModified" datetime="2019-09-08T12:41:16+08:00">2019-09-08</time>
-              </span>
             
           
 
@@ -404,7 +400,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/Linux/" itemprop="url" rel="index"><span itemprop="name">Linux</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/SVN/" itemprop="url" rel="index"><span itemprop="name">SVN</span></a></span>
 
                 
                 
@@ -444,51 +440,98 @@
       
 
       
-        <p>腾讯云提供的云服务器选择安装centos或者ubuntu系统默认是最小化安装,没有提供桌面安装，作为一名非Linux服务器运维人员，没有桌面<br>的系统用起来还是很多不方便，而且因为个人主力机是Windows，需要能够实现远程桌面连接，在权衡实用与性能等因素，最终选择的环境如下：</p>
-<hr>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">系统：centos 7.2;</span><br><span class="line">桌面选择：KDE;</span><br><span class="line">远程桌面：VNC,xrdp；</span><br></pre></td></tr></table></figure>
-
-<hr>
-<p>Linux桌面的发行版有非常多种，但真正好用的并不很多，要么陈旧，要么有些丑陋，这里没有使用一般默认的Gnome桌面，主要原因就是<br>以为它有点丑，毕竟和mac或者Windows的桌面进行比较的话，Linux还是洗洗睡吧。</p>
-<h2 id="安装桌面"><a href="#安装桌面" class="headerlink" title="安装桌面"></a>安装桌面</h2><p>首先通过腾讯云提供的命令行登录方式进入系统界面，先看看有那些可以安装的桌面。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum grouplist</span><br></pre></td></tr></table></figure>
-
-<p>在Available Environment Group 中我们可以找到可以安装的桌面类型，可以选择Mate，Gnome护着Server with GUI,但使用下来发现KDE桌面更胜一筹，可以使用yum来安装桌面，但在安装桌面之前我们要安装一个桌面与系统之间的接口程序”X Windows system”,具体可参考<a href="https://en.wikipedia.org/wiki/X_Window_System" target="_blank" rel="noopener">X Windows system</a>。<br>安装前先更新一下yum源：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum update</span><br></pre></td></tr></table></figure>
-
-<p>然后安装X Windows system</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum groupinstall <span class="string">"X Windows system"</span></span><br></pre></td></tr></table></figure>
-
-<p>此处需要注意安装程序名需要加引号，否则会出错。<br>安装KDE桌面：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">yum groupinstall <span class="string">"KDE Plasma Workspaces"</span> <span class="comment">#KDE桌面名</span></span><br></pre></td></tr></table></figure>
-
-<p>桌面需要手动启动：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">startx</span><br></pre></td></tr></table></figure>
-
-<p>这个过程可能会很长，耐心等待即可。执行完成后可以先使用腾讯云提供的VNC登录的方式登录看一下是否桌面已经启动。桌面安装完成后很多会先重启一下，嗯，这是个好习惯，但此时你会再次看到系统只有 命令行界面，是桌面没安装上吗，继续使用yum grouplist命令查看，发现在已经安装项中已经有了KDE桌面，或者是没有启动，再次执行startx，或许有用，那要是再次重启可又不行了。系统在没有安装桌面 的时候默认启动的是命令行模式，那当只是安装了桌面后系统并不知需要启动桌面，所以需要修改系统的默认启动模式。先来检查一下:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl get-default</span><br></pre></td></tr></table></figure>
-
-<p>得到的结果是“multi-user.target”，这显然不是界面启动，我们修改这个启动项：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemctl <span class="built_in">set</span>-default graphical.target</span><br></pre></td></tr></table></figure>
-
-<p>再次重启就可以了。</p>
-<hr>
-<h2 id="安装VNC"><a href="#安装VNC" class="headerlink" title="安装VNC"></a>安装VNC</h2><p>接下俩需要实现从windows远程，首先安装VNC相关程序：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">yum -y install vnc-server</span><br><span class="line">yum -y install tigervnc-server</span><br></pre></td></tr></table></figure>
-
-<p>安装完成后我们需要修改一下配置文件，位置为/lib/systemd/system目录下，可以发现有一个vncserver@.service的文件，先复制一份：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp /lib/systemd/system/vncserver@.service /lib/systemd/system/vncserver@:1.service</span><br></pre></td></tr></table></figure>
-
-<p>修改复制后的文件：将Execstart行中的<user>修改为自己的账户名，修改PIDFile中的文件路径为用户目录路径：</user></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ExecStart=/usr/sbin/runuser -l root -c &quot;/usr/bin/vncserver %i&quot;</span><br><span class="line">PIDFile=/root/.vnc/%H%i.pid</span><br></pre></td></tr></table></figure>
-
-<p>我使用的均为root账户，可以根据实际情况修改。也可以使用-geometry参数修改分辨率，这里直接使用默认。VNC默认使用的是5901端口，如果有防火墙，将5901端口打开：  </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --permanent --zone=public --dport=5901/tcp</span><br><span class="line">iptables -A INPUT -p tcp -dport=22 -j ACCEPT</span><br></pre></td></tr></table></figure>
-
-<p>启动vncserver，直接键入vncserver,此时需要给vnc账户添加一个密码，然后运行：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">systemctl daemon-reload</span><br><span class="line">systemctl <span class="built_in">enable</span> vncserver@:1.service <span class="comment">#使用新添加的服务</span></span><br><span class="line">reboot</span><br><span class="line">systemctl start vncserver@:1.service</span><br></pre></td></tr></table></figure>
-
-<p>此时就可以使用Windows进行远程桌面，可以下载使用<a href="https://www.realvnc.com/en/connect/download/viewer/windows/" target="_blank" rel="noopener">vnc viewer</a>,也可以使用Windows自带的mstsc服务进行远程。<br>首次登录可能会失败，可以先关闭防火墙再次连接即可。</p>
+        <h3 id="版本控制发展"><a href="#版本控制发展" class="headerlink" title="版本控制发展"></a>版本控制发展</h3><ol>
+<li>什么是版本控制：<br>从字面上来理解版本控制就是用来管理版本的，版本库会帮助我们记录我们每一次修改提交的版本，这样我们可以恢复到以前的任一版本。而且当多人开发的时候他会帮我们把代码合并起来，而且可以记录每一个人的提交记录，这样出现问题之后可以很容易定位。  </li>
+<li>版本控制作用：  <ol>
+<li>数据备份</li>
+<li>版本管理，避免版本混乱</li>
+<li>提高多人开发效率</li>
+</ol>
+</li>
+<li>版本控制工具发展史：  <ol>
+<li>本地版本控制</li>
+</ol>
+<ul>
+<li>用简单的数据库来记录文件的历次更新差异  </li>
+<li>只要整个项目的历史记录被保存在单一位置，就有丢失所有历史更新记录的风险  </li>
+</ul>
+<ol start="2">
+<li>集中化的版本控制系统(CVS,SVN)：  </li>
+</ol>
+<ul>
+<li>用单一的集中管理的服务器，来保存所有文件的修改版本，协同工作通过客户端连接到这台服务器，下载最新的代码或者提交更新  </li>
+<li>单如果中央服务器宕机了，那么宕机过程中服务无法使用，且中央服务器的数据没有备份而损坏所有记录就会丢失  </li>
+</ul>
+<ol start="3">
+<li>分布式版本控制(git等)：  </li>
+</ol>
+<ul>
+<li>分布式最大的特点是客户端并不只是提取最新版本的文件快照，而是把代码仓库完整的镜像下来，每个客户端其实都可以是中央服务器，当中央服务器损坏，从任何一个本地客户端都可以恢复  </li>
+</ul>
+</li>
+</ol>
+<h3 id="选择SVN的原因："><a href="#选择SVN的原因：" class="headerlink" title="选择SVN的原因："></a>选择SVN的原因：</h3><ol>
+<li>git使用有一定成本，对于初学者不友好；  </li>
+<li>Windows服务器搭建git服务复杂，且不能很好解决ssh公钥问题；  </li>
+<li>SVN使用简单，几乎所有操作都可以通过图形化客户端来完成；  </li>
+<li>使用局域网络搭建，方便管理。  </li>
+</ol>
+<h3 id="SVN安装"><a href="#SVN安装" class="headerlink" title="SVN安装"></a>SVN安装</h3><p>SVN属于C/S架构的管理工具，安装分为服务器端和客户端。  </p>
+<ol>
+<li>服务器端安装：<br>VisualSVN下载地址：<a href="http://subversion.apache.org/packages.html" target="_blank" rel="noopener">http://subversion.apache.org/packages.html</a><br><img src="../static/svn-server.png" alt="服务器端程序下载"><br>下载后安装，选择安装目录，仓库存储目录，服务端口号(默认443端口)，完成后打开VisualSVN Server Manger,进行用户，仓库创建等操作  </li>
+<li>客户端安装：<br>选择TortoiseSVN下载安装  </li>
+</ol>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><ol>
+<li>服务端创建用户：  </li>
+</ol>
+<ul>
+<li>在左侧User直接右键添加用户即可  </li>
+</ul>
+<ol start="2">
+<li>服务端创建仓库：  </li>
+</ol>
+<ul>
+<li><img src="../static/new-repo.png" alt="创建仓库">  </li>
+<li>选择创建空仓库，如果选择simple模式，则新建的仓库下会创建trunk,branches,tags三个子目录  </li>
+</ul>
+<ol start="3">
+<li>迁入源代码到服务器仓库<br>假设已经在服务器端创建了一个叫svntest的仓库，则可以在客户端主机的任意文件夹下右键点击Import选项，如下图：<br><img src="../static/import.png" alt="Import"><br>弹出如下界面：<br><img src="../static/checkout.png" alt="checkout"><br>其中URL of repository是svn server中代码库的根目录，尽量每次操作都在信息框中 填写操作日志  </li>
+<li>迁出源代码码到本机：<br>在目标文件夹下右键单击checkout，弹出如下窗体：<br><img src="../static/checkoutsource.png" alt="checkoutsource">  </li>
+<li>提交修改过的文件到SVN服务器：<br>tip：提交代码到服务器时，一定要确保本机的代码是最新版本，否则可能会提交失败或者产生冲突<br>在本机仓库文件夹空白处右键点击SVN Commit即可提交更改，其中文件带有红色标识的是产生更改的文件  </li>
+<li>添加新文件到服务器：  </li>
+</ol>
+<ul>
+<li>可以和正常提交更爱一样直接SVN Commit即可</li>
+<li>或者先对添加的文件进行SVN ADD操作，但这一步操作并不是真正的把文件提交到服务器，而是加入了更新列表的缓存中，必须再次执行SVN Commit操作才能把代码提交到服务器  </li>
+</ul>
+<ol start="7">
+<li>更新本机代码与服务器版本一致</li>
+</ol>
+<ul>
+<li>执行SVN Update命令</li>
+<li>更新操作可能会因为版本冲突而失败也可能文件正在被锁定  </li>
+</ul>
+<ol start="8">
+<li>重命名文件或文件夹，并将修改提交到服务器：</li>
+</ol>
+<ul>
+<li>在需要重命名的文件或者文件夹点击右键，点击TortiseSVN=&gt;Rename,在弹出的窗体写入新名称即可  </li>
+<li>不能直接使用Windows的重命名</li>
+</ul>
+<ol start="9">
+<li>删除文件或文件夹，并将修改提交到服务器：</li>
+</ol>
+<ul>
+<li>直接删除文件或文件夹，然后SVN Commit–不推荐</li>
+<li>在要删除的文件或者文件夹右键Tortoise=&gt;Delete,然后SVN Commit执行删除</li>
+</ul>
+<ol start="10">
+<li>使用分支</li>
+</ol>
+<ul>
+<li>分支原理：在SVN中创建分支实际上就是一个版本拷贝，而不是简单的拷贝一个文件目录 </li>
+<li>创建方法：右键点击Branch/tag，选择路径即可</li>
+</ul>
 
       
     </div>
@@ -519,15 +562,9 @@
         
         <div class="post-tags">
           
-            <a href="/tags/腾讯云/" rel="tag"># 腾讯云</a>
+            <a href="/tags/SVN/" rel="tag"># SVN</a>
           
-            <a href="/tags/centos/" rel="tag"># centos</a>
-          
-            <a href="/tags/远程桌面/" rel="tag"># 远程桌面</a>
-          
-            <a href="/tags/VNC/" rel="tag"># VNC</a>
-          
-            <a href="/tags/KDE/" rel="tag"># KDE</a>
+            <a href="/tags/版本管理/" rel="tag"># 版本管理</a>
           
         </div>
       
@@ -540,8 +577,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/07/22/修改根目录权限导致ssh无法连接/" rel="next" title="修改根目录权限导致ssh无法连接">
-                <i class="fa fa-chevron-left"></i> 修改根目录权限导致ssh无法连接
+              <a href="/2019/09/08/记一次yum无法使用的解决/" rel="next" title="记一次yum无法使用的解决">
+                <i class="fa fa-chevron-left"></i> 记一次yum无法使用的解决
               </a>
             
           </div>
@@ -549,10 +586,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/07/22/SQL-server运维之发送邮件/" rel="prev" title="SQL server运维之发送邮件">
-                SQL server运维之发送邮件 <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -746,7 +779,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装桌面"><span class="nav-number">1.</span> <span class="nav-text">安装桌面</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装VNC"><span class="nav-number">2.</span> <span class="nav-text">安装VNC</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#版本控制发展"><span class="nav-number">1.</span> <span class="nav-text">版本控制发展</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#选择SVN的原因："><span class="nav-number">2.</span> <span class="nav-text">选择SVN的原因：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SVN安装"><span class="nav-number">3.</span> <span class="nav-text">SVN安装</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本使用"><span class="nav-number">4.</span> <span class="nav-text">基本使用</span></a></li></ol></div>
             
 
           </div>

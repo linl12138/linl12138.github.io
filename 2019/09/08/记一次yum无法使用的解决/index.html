@@ -446,7 +446,7 @@
 
 <p>这里发现了一些问题的头绪，找不到一个正常的主机地址，会不会是DNS服务出现了问题，在验证之前我们改用ip地址再尝试一下，百度的ip地址为202.108.22.5  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ping 202.108.22.5</span><br><span class="line">正在 Ping 202.108.22.5 具有 32 字节的数据:</span><br><span class="line">来自 202.108.22.5 的回复: 字节=32 时间=56ms TTL=47</span><br><span class="line">来自 202.108.22.5 的回复: 字节=32 时间=56ms TTL=47</span><br><span class="line">来自 202.108.22.5 的回复: 字节=32 时间=58ms TTL=47</span><br><span class="line">来自 202.108.22.5 的回复: 字节=32 时间=59ms TTL=47</span><br><span class="line"></span><br><span class="line">202.108.22.5 的 Ping 统计信息:</span><br><span class="line">    数据包: 已发送 = 4，已接收 = 4，丢失 = 0 (0% 丢失)，</span><br><span class="line">往返行程的估计时间(以毫秒为单位):</span><br><span class="line">    最短 = 56ms，最长 = 59ms，平均 = 57ms</span><br></pre></td></tr></table></figure></p>
 <p>我们发现可以ping通ip地址，那么真的可能是DNS的问题了，我们用nslookup去验证一下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">nslookup</span><br><span class="line"><span class="meta">&gt;</span>www.baidu.com</span><br><span class="line">Server:         183.60.83.19</span><br><span class="line">Address:        183.60.83.19#53</span><br><span class="line"></span><br><span class="line">Non-authoritative answer:</span><br><span class="line">www.baidu.com   canonical name = www.a.shifen.com.</span><br><span class="line">Name:   www.a.shifen.com</span><br><span class="line">Address: 180.101.49.12</span><br><span class="line">Name:   www.a.shifen.com</span><br><span class="line">Address: 180.101.49.11</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">nslookup</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">www.baidu.com</span></span><br><span class="line">Server:         183.60.83.19</span><br><span class="line">Address:        183.60.83.19#53</span><br><span class="line"></span><br><span class="line">Non-authoritative answer:</span><br><span class="line">www.baidu.com   canonical name = www.a.shifen.com.</span><br><span class="line">Name:   www.a.shifen.com</span><br><span class="line">Address: 180.101.49.12</span><br><span class="line">Name:   www.a.shifen.com</span><br><span class="line">Address: 180.101.49.11</span><br></pre></td></tr></table></figure>
 
 <p>奇怪的是域名可以进行解析，我们可以查看/etc/resolve.comf文件，这里存储着DNS服务器信息，一般存在两个，第二个作为备用，打开发现第一个DNS服务器地址正式nslookup命令中使用的DNS服务器地址，所以好像DNS服务也没有问题。<br>但是根据之前的ping无法联通域名，说明名称解析相关的服务肯定是有问题的，所以想到了NSS:<br>根据wikipedia中的说明，NSS(Name Service Switch, 名称服务开关)是类unix操作系统中的一种工具，它为通用配置数据库和名称解析机制提供了各种来源。这些源文件包括本地操作系统文件(例如/etc/passwd、/etc/group和/etc/hosts)、域名系统(DNS)、网络信息服务(NIS)和LDAP。<br>我们可以使用nsswitch.conf来对NSS进行配置，联系之前的问题，通过查询可知，ping命令和nslookup处理域名信息是用的并不是同一种方法，使用ping命令处理一个域名的时候，是使用gethostbyname()函数返回对应的主机信息; 而host和nslookup则是直接使用/etc/resolv.conf中的DNS服务器。因此，需要查看/etc/nsswitch.conf中的hosts:数据库是否打开了dns选项。<br>那么修改就很容易了，在/etc/nsswitch.conf文件种找到hosts字段，可以发现：  </p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hosts:  files dns</span><br></pre></td></tr></table></figure>
@@ -508,6 +508,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/25/SVN那些事/" rel="prev" title="SVN那些事">
+                SVN那些事 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -577,7 +581,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -598,7 +602,9 @@
         
           
         
-        <span class="site-state-item-count">2</span>
+          
+        
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -645,7 +651,11 @@
         
           
         
-        <span class="site-state-item-count">15</span>
+          
+        
+          
+        
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>

@@ -328,6 +328,262 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/25/SVN那些事/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="林磊">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="小院随笔">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                
+                <a href="/2019/09/25/SVN那些事/" class="post-title-link" itemprop="url">SVN那些事</a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+
+          
+          
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+
+              
+                
+              
+
+              <time title="创建时间：2019-09-25 18:32:11 / 修改时间：20:23:12" itemprop="dateCreated datePublished" datetime="2019-09-25T18:32:11+08:00">2019-09-25</time>
+            </span>
+          
+
+          
+            
+
+            
+          
+
+          
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/SVN/" itemprop="url" rel="index"><span itemprop="name">SVN</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+            
+          
+
+          
+          
+
+          
+
+          
+
+          <br>
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="版本控制发展"><a href="#版本控制发展" class="headerlink" title="版本控制发展"></a>版本控制发展</h3><ol>
+<li>什么是版本控制：<br>从字面上来理解版本控制就是用来管理版本的，版本库会帮助我们记录我们每一次修改提交的版本，这样我们可以恢复到以前的任一版本。而且当多人开发的时候他会帮我们把代码合并起来，而且可以记录每一个人的提交记录，这样出现问题之后可以很容易定位。  </li>
+<li>版本控制作用：  <ol>
+<li>数据备份</li>
+<li>版本管理，避免版本混乱</li>
+<li>提高多人开发效率</li>
+</ol>
+</li>
+<li>版本控制工具发展史：  <ol>
+<li>本地版本控制</li>
+</ol>
+<ul>
+<li>用简单的数据库来记录文件的历次更新差异  </li>
+<li>只要整个项目的历史记录被保存在单一位置，就有丢失所有历史更新记录的风险  </li>
+</ul>
+<ol start="2">
+<li>集中化的版本控制系统(CVS,SVN)：  </li>
+</ol>
+<ul>
+<li>用单一的集中管理的服务器，来保存所有文件的修改版本，协同工作通过客户端连接到这台服务器，下载最新的代码或者提交更新  </li>
+<li>单如果中央服务器宕机了，那么宕机过程中服务无法使用，且中央服务器的数据没有备份而损坏所有记录就会丢失  </li>
+</ul>
+<ol start="3">
+<li>分布式版本控制(git等)：  </li>
+</ol>
+<ul>
+<li>分布式最大的特点是客户端并不只是提取最新版本的文件快照，而是把代码仓库完整的镜像下来，每个客户端其实都可以是中央服务器，当中央服务器损坏，从任何一个本地客户端都可以恢复  </li>
+</ul>
+</li>
+</ol>
+<h3 id="选择SVN的原因："><a href="#选择SVN的原因：" class="headerlink" title="选择SVN的原因："></a>选择SVN的原因：</h3><ol>
+<li>git使用有一定成本，对于初学者不友好；  </li>
+<li>Windows服务器搭建git服务复杂，且不能很好解决ssh公钥问题；  </li>
+<li>SVN使用简单，几乎所有操作都可以通过图形化客户端来完成；  </li>
+<li>使用局域网络搭建，方便管理。  </li>
+</ol>
+<h3 id="SVN安装"><a href="#SVN安装" class="headerlink" title="SVN安装"></a>SVN安装</h3><p>SVN属于C/S架构的管理工具，安装分为服务器端和客户端。  </p>
+<ol>
+<li>服务器端安装：<br>VisualSVN下载地址：<a href="http://subversion.apache.org/packages.html" target="_blank" rel="noopener">http://subversion.apache.org/packages.html</a><br><img src="../static/svn-server.png" alt="服务器端程序下载"><br>下载后安装，选择安装目录，仓库存储目录，服务端口号(默认443端口)，完成后打开VisualSVN Server Manger,进行用户，仓库创建等操作  </li>
+<li>客户端安装：<br>选择TortoiseSVN下载安装  </li>
+</ol>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><ol>
+<li>服务端创建用户：  </li>
+</ol>
+<ul>
+<li>在左侧User直接右键添加用户即可  </li>
+</ul>
+<ol start="2">
+<li>服务端创建仓库：  </li>
+</ol>
+<ul>
+<li><img src="../static/new-repo.png" alt="创建仓库">  </li>
+<li>选择创建空仓库，如果选择simple模式，则新建的仓库下会创建trunk,branches,tags三个子目录  </li>
+</ul>
+<ol start="3">
+<li>迁入源代码到服务器仓库<br>假设已经在服务器端创建了一个叫svntest的仓库，则可以在客户端主机的任意文件夹下右键点击Import选项，如下图：<br><img src="../static/import.png" alt="Import"><br>弹出如下界面：<br><img src="../static/checkout.png" alt="checkout"><br>其中URL of repository是svn server中代码库的根目录，尽量每次操作都在信息框中 填写操作日志  </li>
+<li>迁出源代码码到本机：<br>在目标文件夹下右键单击checkout，弹出如下窗体：<br><img src="../static/checkoutsource.png" alt="checkoutsource">  </li>
+<li>提交修改过的文件到SVN服务器：<br>tip：提交代码到服务器时，一定要确保本机的代码是最新版本，否则可能会提交失败或者产生冲突<br>在本机仓库文件夹空白处右键点击SVN Commit即可提交更改，其中文件带有红色标识的是产生更改的文件  </li>
+<li>添加新文件到服务器：  </li>
+</ol>
+<ul>
+<li>可以和正常提交更爱一样直接SVN Commit即可</li>
+<li>或者先对添加的文件进行SVN ADD操作，但这一步操作并不是真正的把文件提交到服务器，而是加入了更新列表的缓存中，必须再次执行SVN Commit操作才能把代码提交到服务器  </li>
+</ul>
+<ol start="7">
+<li>更新本机代码与服务器版本一致</li>
+</ol>
+<ul>
+<li>执行SVN Update命令</li>
+<li>更新操作可能会因为版本冲突而失败也可能文件正在被锁定  </li>
+</ul>
+<ol start="8">
+<li>重命名文件或文件夹，并将修改提交到服务器：</li>
+</ol>
+<ul>
+<li>在需要重命名的文件或者文件夹点击右键，点击TortiseSVN=&gt;Rename,在弹出的窗体写入新名称即可  </li>
+<li>不能直接使用Windows的重命名</li>
+</ul>
+<ol start="9">
+<li>删除文件或文件夹，并将修改提交到服务器：</li>
+</ol>
+<ul>
+<li>直接删除文件或文件夹，然后SVN Commit–不推荐</li>
+<li>在要删除的文件或者文件夹右键Tortoise=&gt;Delete,然后SVN Commit执行删除</li>
+</ul>
+<ol start="10">
+<li>使用分支</li>
+</ol>
+<ul>
+<li>分支原理：在SVN中创建分支实际上就是一个版本拷贝，而不是简单的拷贝一个文件目录 </li>
+<li>创建方法：右键点击Branch/tag，选择路径即可</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    
+
+    
+
+    
+    
+    
+
+    
+
+    
+      
+    
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/08/记一次yum无法使用的解决/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -446,7 +702,7 @@
 
 <p>这里发现了一些问题的头绪，找不到一个正常的主机地址，会不会是DNS服务出现了问题，在验证之前我们改用ip地址再尝试一下，百度的ip地址为202.108.22.5  <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">ping 202.108.22.5</span><br><span class="line">正在 Ping 202.108.22.5 具有 32 字节的数据:</span><br><span class="line">来自 202.108.22.5 的回复: 字节=32 时间=56ms TTL=47</span><br><span class="line">来自 202.108.22.5 的回复: 字节=32 时间=56ms TTL=47</span><br><span class="line">来自 202.108.22.5 的回复: 字节=32 时间=58ms TTL=47</span><br><span class="line">来自 202.108.22.5 的回复: 字节=32 时间=59ms TTL=47</span><br><span class="line"></span><br><span class="line">202.108.22.5 的 Ping 统计信息:</span><br><span class="line">    数据包: 已发送 = 4，已接收 = 4，丢失 = 0 (0% 丢失)，</span><br><span class="line">往返行程的估计时间(以毫秒为单位):</span><br><span class="line">    最短 = 56ms，最长 = 59ms，平均 = 57ms</span><br></pre></td></tr></table></figure></p>
 <p>我们发现可以ping通ip地址，那么真的可能是DNS的问题了，我们用nslookup去验证一下：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">nslookup</span><br><span class="line"><span class="meta">&gt;</span>www.baidu.com</span><br><span class="line">Server:         183.60.83.19</span><br><span class="line">Address:        183.60.83.19#53</span><br><span class="line"></span><br><span class="line">Non-authoritative answer:</span><br><span class="line">www.baidu.com   canonical name = www.a.shifen.com.</span><br><span class="line">Name:   www.a.shifen.com</span><br><span class="line">Address: 180.101.49.12</span><br><span class="line">Name:   www.a.shifen.com</span><br><span class="line">Address: 180.101.49.11</span><br></pre></td></tr></table></figure>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">nslookup</span><br><span class="line"><span class="meta">&gt;</span><span class="bash">www.baidu.com</span></span><br><span class="line">Server:         183.60.83.19</span><br><span class="line">Address:        183.60.83.19#53</span><br><span class="line"></span><br><span class="line">Non-authoritative answer:</span><br><span class="line">www.baidu.com   canonical name = www.a.shifen.com.</span><br><span class="line">Name:   www.a.shifen.com</span><br><span class="line">Address: 180.101.49.12</span><br><span class="line">Name:   www.a.shifen.com</span><br><span class="line">Address: 180.101.49.11</span><br></pre></td></tr></table></figure>
 
 <p>奇怪的是域名可以进行解析，我们可以查看/etc/resolve.comf文件，这里存储着DNS服务器信息，一般存在两个，第二个作为备用，打开发现第一个DNS服务器地址正式nslookup命令中使用的DNS服务器地址，所以好像DNS服务也没有问题。<br>但是根据之前的ping无法联通域名，说明名称解析相关的服务肯定是有问题的，所以想到了NSS:<br>根据wikipedia中的说明，NSS(Name Service Switch, 名称服务开关)是类unix操作系统中的一种工具，它为通用配置数据库和名称解析机制提供了各种来源。这些源文件包括本地操作系统文件(例如/etc/passwd、/etc/group和/etc/hosts)、域名系统(DNS)、网络信息服务(NIS)和LDAP。<br>我们可以使用nsswitch.conf来对NSS进行配置，联系之前的问题，通过查询可知，ping命令和nslookup处理域名信息是用的并不是同一种方法，使用ping命令处理一个域名的时候，是使用gethostbyname()函数返回对应的主机信息; 而host和nslookup则是直接使用/etc/resolv.conf中的DNS服务器。因此，需要查看/etc/nsswitch.conf中的hosts:数据库是否打开了dns选项。<br>那么修改就很容易了，在/etc/nsswitch.conf文件种找到hosts字段，可以发现：  </p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hosts:  files dns</span><br></pre></td></tr></table></figure>
@@ -1673,7 +1929,7 @@
         
           <a href="/archives/">
         
-          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-count">8</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1694,7 +1950,9 @@
         
           
         
-        <span class="site-state-item-count">2</span>
+          
+        
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span>
         </a>
       </div>
@@ -1741,7 +1999,11 @@
         
           
         
-        <span class="site-state-item-count">15</span>
+          
+        
+          
+        
+        <span class="site-state-item-count">17</span>
         <span class="site-state-item-name">标签</span>
         </a>
       </div>
